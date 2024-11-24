@@ -43,8 +43,8 @@ class CreateEducation(graphene.Mutation):
     idEducation   = graphene.Int()
     degree     = graphene.String()
     university = graphene.String()
-    start_date = graphene.Date()
-    end_date   = graphene.Date()
+    startDate = graphene.Date()
+    endDate   = graphene.Date()
     posted_by = graphene.Field(UserType)
 
     #2
@@ -52,11 +52,11 @@ class CreateEducation(graphene.Mutation):
         idEducation= graphene.Int()  
         degree     = graphene.String()
         university = graphene.String()
-        start_date = graphene.Date()
-        end_date   = graphene.Date()
+        startDate = graphene.Date()
+        endDate   = graphene.Date()
 
     #3
-    def mutate(self, info, idEducation, degree, university, start_date, end_date):
+    def mutate(self, info, idEducation, degree, university, startDate, endDate):
         user = info.context.user or None
         if user.is_anonymous:
             raise Exception('Not logged in !');
@@ -68,8 +68,8 @@ class CreateEducation(graphene.Mutation):
         education = Education(
             degree     = degree,
             university = university,
-            start_date = start_date,
-            end_date   = end_date,
+            startDate = startDate,
+            endDate   = endDate,
             posted_by  = user
             )
         
@@ -82,8 +82,8 @@ class CreateEducation(graphene.Mutation):
             idEducation  = education.id,
             degree     = education.degree,
             university = education.university,
-            start_date = education.start_date,
-            end_date   = education.end_date,
+            startDate = education.startDate,
+            endDate   = education.endDate,
             posted_by  = education.posted_by
         )
 
@@ -118,4 +118,6 @@ class DeleteEducation(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_education = CreateEducation.Field()
     delete_education = DeleteEducation.Field()
+
+schema = graphene.Schema(mutation=Mutation)
 

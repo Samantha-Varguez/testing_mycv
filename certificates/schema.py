@@ -9,8 +9,8 @@ class CertificatesType(DjangoObjectType):
         model = Certificates
 
 class Query(graphene.ObjectType):
-    titles = graphene.List(CertificatesType, search=graphene.String())
-    titleById = graphene.Field(CertificatesType, idCertificates=graphene.Int())
+    certificates = graphene.List(CertificatesType, search=graphene.String())
+    certificateById = graphene.Field(CertificatesType, idCertificates=graphene.Int())
 
     def resolve_certificates(self, info, search=None, **kwargs):
         user = info.context.user
@@ -72,7 +72,7 @@ class CreateCertificates(graphene.Mutation):
             )
         
         if currentCertificates:
-            Certificates.id = currentCertificates.id
+            certificates.id = currentCertificates.id
 
         certificates.save()
 
@@ -116,3 +116,4 @@ class Mutation(graphene.ObjectType):
     create_Certificates = CreateCertificates.Field()
     delete_Certificates = DeleteCertificates.Field()
 
+schema = graphene.Schema(mutation=Mutation)

@@ -40,6 +40,18 @@ USERS_QUERY = '''
    }
  }
 '''
+CREATE_VOTE_MUTATION = '''
+mutation createVoteMutation($linkId: Int!) {
+                createVote(linkId: $linkId) {
+                    link {
+                        url
+                        description
+                        id
+                    }
+                }
+            }
+            '''
+
 
 
 CREATE_LINK_MUTATION = '''
@@ -182,8 +194,31 @@ class LinkTestCase(GraphQLTestCase):
         self.assertResponseNoErrors(response)
         self.assertDictEqual({"createLink": {"description": "google"}}, content['data']) 
 
+    def test_vote_as_anonymous_user(self):
+        """Test that an anonymous user cannot vote."""
+        response = self.query(
+            CREATE_VOTE_MUTATION,
+            variables={'linkId': self.link1.id}
+        )
+        content = json.loads(response.content)
+        
+        # Check that the error message is as expected
+        self.assertResponseHasErrors(response)
+        self.assertIn('GraphQLError: You must be logged to vote!', str(content['errors']))
 
-    
+    def test_vote_with_invalid_link(self):
+        """Test that voting on an invalid link raises an error."""
+        response = self.query(
+            CREATE_VOTE_MUTATION,
+            variables={'linkId': 9999},  # Invalid link ID
+            headers=self.headers
+        )
+        content = json.loads(response.content)
+        
+        # Check that the error message is as expected
+        self.assertResponseHasErrors(response)
+        self.assertIn('Invalid Link!', str(content['errors']))
+
     def test_vote_on_link(self):
         # Vote on the first link (using its ID)
         response_vote = self.query(
