@@ -45,8 +45,8 @@ class CreateWorkExperience(graphene.Mutation):
     company = graphene.String()
     location = graphene.String()
     description = graphene.String()
-    start_date = graphene.Date()
-    end_date   = graphene.Date()
+    startDate = graphene.Date()
+    endDate   = graphene.Date()
     posted_by = graphene.Field(UserType)
 
     #2
@@ -56,11 +56,11 @@ class CreateWorkExperience(graphene.Mutation):
         company = graphene.String()
         location = graphene.String()
         description = graphene.String()
-        start_date = graphene.Date()
-        end_date   = graphene.Date()
+        startDate = graphene.Date()
+        endDate   = graphene.Date()
 
     #3
-    def mutate(self, info, idWorkExperience, position, company,  location, description , start_date, end_date):
+    def mutate(self, info, idWorkExperience, position, company,  location, description , startDate, endDate):
         user = info.context.user or None
         if user.is_anonymous:
             raise Exception('Not logged in !');
@@ -70,11 +70,12 @@ class CreateWorkExperience(graphene.Mutation):
         print (currentWorkExperience)
 
         workExperience = WorkExperience(
+            company = company,
             position = position,
             location = location,
             description = description,
-            start_date = start_date,
-            end_date   = end_date,
+            startDate = startDate,
+            endDate   = endDate,
             posted_by  = user
             )
         
@@ -85,11 +86,12 @@ class CreateWorkExperience(graphene.Mutation):
 
         return CreateWorkExperience(
             idWorkExperience  = workExperience.id,
+            company = workExperience.company,
             position = workExperience.position,
             location = workExperience.location,
             description = workExperience.description,
-            start_date = workExperience.start_date,
-            end_date   = workExperience.end_date,
+            startDate = workExperience.startDate,
+            endDate   = workExperience.endDate,
             posted_by  = workExperience.posted_by
         )
 
@@ -125,3 +127,5 @@ class Mutation(graphene.ObjectType):
     create_workExperience = CreateWorkExperience.Field()
     delete_workExperience = DeleteWorkExperience.Field()
 
+
+schema = graphene.Schema(mutation=Mutation)

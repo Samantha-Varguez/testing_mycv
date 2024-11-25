@@ -28,7 +28,7 @@ class Query(graphene.ObjectType):
             )
             return Interests.objects.filter(filter)
         
-    def resolve_degreeById(self, info, idInterests, **kwargs):
+    def resolve_interestById(self, info, idInterests, **kwargs):
         user = info.context.user
         if user.is_anonymous:
             raise Exception('Not logged in!')
@@ -96,7 +96,7 @@ class DeleteInterests(graphene.Mutation):
         print (currentInterests)
 
         if not currentInterests:
-            raise Exception('Invalid Language id')
+            raise Exception('Invalid Interests id')
         
         currentInterests.delete()
 
@@ -108,3 +108,5 @@ class DeleteInterests(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_Interests = CreateInterests.Field()
     delete_Interests = DeleteInterests.Field()
+
+schema = graphene.Schema(mutation=Mutation)

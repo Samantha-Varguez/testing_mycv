@@ -94,7 +94,7 @@ class DeleteSkills(graphene.Mutation):
         print (currentSkills)
 
         if not currentSkills:
-            raise Exception('Invalid Language id')
+            raise Exception('Invalid Skills id')
         
         currentSkills.delete()
 
@@ -106,3 +106,5 @@ class DeleteSkills(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_Skills = CreateSkills.Field()
     delete_Skills = DeleteSkills.Field()
+
+schema = graphene.Schema(mutation=Mutation)

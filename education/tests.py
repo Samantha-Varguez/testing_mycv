@@ -133,6 +133,17 @@ class LinkTestCase(GraphQLTestCase):
         print(token)
         self.headers = {"AUTHORIZATION": f"JWT {token}"}
 
+    def test_create_Skills_not_logged_in(self):
+        # Attempt to delete without authentication
+        response = self.query(
+            CREATE_EDUCATION_MUTATION,
+            variables={'idEducation': 1, 'degree': 'UV', 'startDate': '2024-02-01' , 'endDate': "2024-09-02", 'university': 'Google'}
+        )
+        content = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("errors", content)
+        self.assertEqual(content['errors'][0]['message'], "Not logged in !")
+        self.assertTrue(Education.objects.filter(id=1).exists())
 
     def test_createEducation_mutation(self):
         response = self.query(
@@ -238,3 +249,14 @@ class LinkTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(content['data']['degreeById'])
+    
+    def test_skill_by_id_not_logged_in(self):
+
+        response = self.query(
+            EDUCATION_BY_ID_QUERY,
+            variables={"idEducation": 1}
+        )
+        content = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("errors", content)
+        self.assertEqual(content['errors'][0]['message'], "Not logged in!")
